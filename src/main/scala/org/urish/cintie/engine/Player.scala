@@ -11,19 +11,12 @@ class Player() {
 }
 
 class FourSourcePlayer(soundBank: File) extends Player {
-  val clips = List(1, 2, 3, 4).map(i => {
-    val clip = AudioSystem.getClip();
-    clip.open(AudioSystem.getAudioInputStream(new File(soundBank, i + ".wav")));
-    System.out.println(clip.getControl(FloatControl.Type.MASTER_GAIN).asInstanceOf[FloatControl].getValue());
-    clip.start();
-    clip.loop(9999)
-    clip
-  });
+  val clips = List(1, 2, 3, 4).map(i => new AudioClip(new File(soundBank, i + ".wav")))
+  clips.map(clip => clip.start())
   update
 
   def setGain(i: Int, value: Float) {
-    var gainControl = clips(i - 1).getControl(FloatControl.Type.MASTER_GAIN).asInstanceOf[FloatControl];
-    gainControl.setValue(Math.log10(value).floatValue() * 20);
+    clips(i - 1).setVolume(value)
   }
 
   def update {
