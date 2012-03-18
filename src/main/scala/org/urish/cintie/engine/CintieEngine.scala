@@ -15,4 +15,6 @@ class CintieEngine {
   
   def stop {
   }
+  
+  def player(id: Int) = players(id)
 }

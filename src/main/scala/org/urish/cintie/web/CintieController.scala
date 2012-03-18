@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.urish.cintie.engine.CintieEngine
 import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.bind.annotation.RequestParam
+import org.urish.cintie.engine.FourSourcePlayer
 
 @Controller
 class CintieController {
@@ -27,5 +29,9 @@ class CintieController {
 
   @RequestMapping(value = Array("/pawns/{id}"), method = Array(RequestMethod.POST))
   @ResponseBody
-  def updatePawn(@PathVariable("id") id: Int) = "{\"x\": " + 0 + ", \"y\": " + 0 + "}"
+  def updatePawn(@PathVariable("id") id: Int, @RequestParam("x") x: Float, @RequestParam("y") y: Float) {
+    engine.player(id).x = x;
+    engine.player(id).y = y;
+    engine.player(id).asInstanceOf[FourSourcePlayer].update;
+  }
 }
