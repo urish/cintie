@@ -30,8 +30,9 @@ class CintieController {
   @RequestMapping(value = Array("/pawns/{id}"), method = Array(RequestMethod.POST))
   @ResponseBody
   def updatePawn(@PathVariable("id") id: Int, @RequestParam("x") x: Float, @RequestParam("y") y: Float) {
-    engine.player(id).x = x;
-    engine.player(id).y = y;
-    engine.player(id).asInstanceOf[FourSourcePlayer].update;
+    val player = engine.player(id-1)
+    player.x = x;
+    player.y = y;
+    player.asInstanceOf[FourSourcePlayer].update;
   }
 }

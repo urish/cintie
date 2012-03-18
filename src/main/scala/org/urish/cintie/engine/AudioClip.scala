@@ -13,7 +13,7 @@ import javax.sound.sampled.SourceDataLine
 import javax.sound.sampled.UnsupportedAudioFileException
 
 class AudioClip(val file: File) extends Runnable {
-  val in = AudioSystem.getAudioInputStream(file);
+  var in = AudioSystem.getAudioInputStream(file);
   val format = in.getFormat();
   val frameSize = format.getFrameSize()
   val encoding = format.getEncoding();
@@ -28,12 +28,10 @@ class AudioClip(val file: File) extends Runnable {
   val line: SourceDataLine = AudioSystem.getLine(info).asInstanceOf[SourceDataLine];
   var playThread: Thread = null;
   var playing: Boolean = false;
-  var notYetEOF: Boolean = false;
 
   def start() {
     line.open();
     playing = true;
-    notYetEOF = true;
     playThread = new Thread(this);
     playThread.setDaemon(true);
     playThread.start();
@@ -54,26 +52,18 @@ class AudioClip(val file: File) extends Runnable {
     var readPoint: Int = 0;
     var bytesRead: Int = 0;
 
-    breakable {
-      while (notYetEOF) {
-        if (playing) {
-          bytesRead = in.read(buffer, readPoint, buffer.length - readPoint);
-          if (bytesRead == -1) {
-            notYetEOF = false;
-            break;
-          }
-          val frames = bytesRead / frameSize;
-          val leftover = bytesRead % frameSize;
-          line.write(buffer, readPoint, bytesRead - leftover);
-          System.arraycopy(buffer, bytesRead, buffer, 0, leftover);
-          readPoint = leftover;
-        } else {
-          Thread.sleep(10);
-        }
+    while (playing) {
+      bytesRead = in.read(buffer, readPoint, buffer.length - readPoint);
+      if (bytesRead == -1) {
+        in.close()
+        in = AudioSystem.getAudioInputStream(file);
+        bytesRead = in.read(buffer, readPoint, buffer.length - readPoint);
       }
+      val frames = bytesRead / frameSize;
+      val leftover = bytesRead % frameSize;
+      line.write(buffer, readPoint, bytesRead - leftover);
+      System.arraycopy(buffer, bytesRead, buffer, 0, leftover);
+      readPoint = leftover;
     }
-    System.out.println("reached eof");
-    line.drain();
-    line.stop();
-  } // run
+  }
 }
