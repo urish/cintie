@@ -179,6 +179,13 @@
 			<scope>system</scope>
 			<systemPath>${basedir}/lib/jvsthost.jar</systemPath>
 		</dependency>
+		<dependency>
+			<groupId>others</groupId>
+			<artifactId>jvsthost-lib</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/jvsthost-lib.jar</systemPath>
+		</dependency>
 
 		<!-- Other community dependencies -->
 		<dependency>
