@@ -5,7 +5,7 @@ import javax.sound.sampled.AudioSystem
 import javax.sound.sampled.FloatControl
 
 class CintieEngine {
-  val baseDir = new File("""C:\p\fp\cintie\sound""")
+  val baseDir = new File(System.getProperty("cintie.soundDir"))
   val vstPath = new File("""C:\Program Files (x86)\VstPlugins""")
 
   var players: List[Player] = List(new FourSourcePlayer(new File(baseDir, "gtr")), new FourSourcePlayer(new File(baseDir, "piano")),
