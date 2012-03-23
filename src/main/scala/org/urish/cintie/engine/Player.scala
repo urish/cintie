@@ -20,10 +20,11 @@ abstract class Player {
 
 class FourSourcePlayer(soundBank: File) extends Player {
   val clips = List(1, 2, 3, 4).map(i => new AudioClip(new File(soundBank, i + ".wav")))
-  clips.map(clip => clip.start())
-  update
 
-  def start() = clips.foreach(clip => clip.start)
+  def start() {
+    clips.foreach(clip => if (!clip.playing) { clip.start })
+    update
+  }
 
   def stop() = clips.foreach(clip => clip.stop)
 
@@ -54,7 +55,7 @@ class VstHarmonicPlayer(vstPath: File) extends Player with Runnable {
 
   val harmonic = List(0, 2, 4, 5, 7, 9, 11)
   var prevIndexXY = 0f
-  
+
   val thread = new Thread(audioThread);
   thread.setDaemon(true)
   thread.start();
