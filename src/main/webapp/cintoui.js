@@ -4,14 +4,18 @@ $(document).ready(function(){
 		height: $('.playground-board').height() - $('.pawn-1').height(),
 	};
 	
-	$("#btn-play").click(function(event) {  
-		$.ajax({url: "/app/start"});  
+	function updatePawns() {
 		$.getJSON("/app/pawns", function(data) {
 			data.pawns.map(function(pawn) {
-				$(".pawn-" + pawn.id).css("left", pawn.x * fieldSize.width)
+				$(".pawn-" + pawn.id).show().css("left", pawn.x * fieldSize.width)
 					.css("top", pawn.y * fieldSize.height);
 			});
 		});
+	}
+	
+	$("#btn-play").click(function(event) {  
+		$.ajax({url: "/app/start"});  
+		updatePawns();
 		event.stopPropagation();
 	});
 	
@@ -20,7 +24,7 @@ $(document).ready(function(){
 		event.stopPropagation();
 	});
 	
-	function updatePawn(name, position) {
+	function movePawn(name, position) {
 		var pawnId = name.replace(/[^\d]/g, '');
 		var left = position.left / fieldSize.width;
 		var top = position.top / fieldSize.height;
@@ -34,13 +38,15 @@ $(document).ready(function(){
 		});  
 	}
 	
-	$(".pawn").draggable({
+	$(".pawn").hide().draggable({
 		containment: 'parent',
 		drag: function(event, ui) {
-			updatePawn(this.className, ui.position)
+			movePawn(this.className, ui.position)
 		},
 		stop: function(event, ui) {
-			updatePawn(this.className, ui.position)
+			movePawn(this.className, ui.position)
 		}
 	});
+	
+	updatePawns();
 });
