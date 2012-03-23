@@ -8,6 +8,7 @@ import com.synthbot.audioplugin.vst.vst2.JVstHost2
 import javax.sound.midi.ShortMessage
 import com.synthbot.audioio.vst.JVstAudioThread
 import org.urish.cintie.util.Library
+import org.urish.cintie.util.VstPresetLoader
 
 class Player {
   var x: Float = 0;
@@ -37,6 +38,7 @@ class VstHarmonicPlayer(vstPath: File) extends Player with Runnable {
 
   Library.loadEmbededLibrary("jvsthost2.dll")
   val vst = JVstHost2.newInstance(vstPath, SAMPLE_RATE, BLOCK_SIZE)
+  VstPresetLoader.loadVstPreset(vst, new File(vstPath.getParent(), "nexus content/presets/piano/PN Nexus Grandpiano.fxp"))
   val audioThread = new JVstAudioThread(vst);
 
   val thread = new Thread(audioThread);
