@@ -52,6 +52,9 @@ class VstHarmonicPlayer(vstPath: File) extends Player with Runnable {
   def start() = playing = true
   def stop() = playing = false
 
+  val harmonic = List(0, 2, 4, 5, 7, 9, 11)
+  var prevIndexXY = 0f
+  
   val thread = new Thread(audioThread);
   thread.setDaemon(true)
   thread.start();
@@ -60,13 +63,16 @@ class VstHarmonicPlayer(vstPath: File) extends Player with Runnable {
   def run() {
     try {
       while (true) {
-        if (!playing) {
+        val xy = this.x + this.y
+        if (!playing || (xy == prevIndexXY)) {
           Thread.sleep(100)
         } else {
-          val note = (((this.x + this.y) * 24) + 48).asInstanceOf[Int];
+          prevIndexXY = xy
+          val index = (this.y * 12).intValue()
+          val note = (harmonic(index % 7) + 12 * (index / 7) + 48).asInstanceOf[Int];
 
           val channel = 0
-          val velocity = 127
+          val velocity = (this.x * 127).intValue()
           val messageOn = new ShortMessage();
           messageOn.setMessage(ShortMessage.NOTE_ON, channel, note, velocity);
           vst.queueMidiMessage(messageOn);
