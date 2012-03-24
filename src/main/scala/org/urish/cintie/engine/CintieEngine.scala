@@ -36,4 +36,6 @@ class CintieEngine {
   }
 
   def player(id: Int) = players(id)
+  
+  def playerCount = players.length
 }
