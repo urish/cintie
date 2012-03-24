@@ -22,7 +22,15 @@
 		<version.commons.logging>1.1.1</version.commons.logging>
 		<version.scala>2.9.1</version.scala>
 		<version.jersey>1.12</version.jersey>
+		<version.swt>3.6.2</version.swt>
 	</properties>
+
+	<repositories>
+		<repository>
+			<id>eclipse-swt-testing</id>
+			<url>http://maven.eclipse.org/nexus/content/repositories/testing/</url>
+		</repository>
+	</repositories>
 
 	<dependencyManagement>
 
@@ -202,6 +210,18 @@
 			<systemPath>${basedir}/lib/jvsthost-lib.jar</systemPath>
 		</dependency>
 
+		<!-- SWT for GUI -->
+		<dependency>
+			<groupId>org.eclipse.swt</groupId>
+			<artifactId>org.eclipse.swt.win32.win32.x86</artifactId>
+			<version>${version.swt}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.swt</groupId>
+			<artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId>
+			<version>${version.swt}</version>
+		</dependency>
+
 		<!-- Other community dependencies -->
 		<dependency>
 			<groupId>aopalliance</groupId>
@@ -264,6 +284,38 @@
 						</systemProperty>
 					</systemProperties>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>make-a-jar</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>src/assemble/musicroom.xml</descriptor>
+							</descriptors>
+							<finalName>app</finalName>
+							<appendAssemblyId>false</appendAssemblyId>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
