@@ -1,5 +1,8 @@
 package org.urish.cintie.ui;
 
+import java.util.Iterator;
+
+import org.eclipse.draw2d.EventListenerList;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.draw2d.MouseEvent;
@@ -12,6 +15,7 @@ import org.eclipse.draw2d.geometry.Rectangle;
 
 public class FigureMover implements MouseListener, MouseMotionListener {
 	private final IFigure figure;
+	private final EventListenerList eventListeners = new EventListenerList();
 
 	public FigureMover(IFigure figure) {
 		this.figure = figure;
@@ -21,11 +25,13 @@ public class FigureMover implements MouseListener, MouseMotionListener {
 
 	private Point location;
 
+	@Override
 	public void mousePressed(MouseEvent event) {
 		location = event.getLocation();
 		event.consume();
 	}
 
+	@Override
 	public void mouseDragged(MouseEvent event) {
 		if (location == null)
 			return;
@@ -42,12 +48,24 @@ public class FigureMover implements MouseListener, MouseMotionListener {
 		Rectangle bounds = figure.getBounds();
 		updateMgr.addDirtyRegion(figure.getParent(), bounds);
 		bounds = bounds.getCopy().translate(offset.width, offset.height);
+		Rectangle parentBounds = figure.getParent().getBounds();
+		bounds.x = Math.max(bounds.x, 0);
+		bounds.y = Math.max(bounds.y, 0);
+		bounds.x = Math.min(bounds.x, parentBounds.width - bounds.width);
+		bounds.y = Math.min(bounds.y, parentBounds.height - bounds.height);
 		layoutMgr.setConstraint(figure, bounds);
-		figure.translate(offset.width, offset.height);
+		figure.setBounds(bounds);
 		updateMgr.addDirtyRegion(figure.getParent(), bounds);
 		event.consume();
+		
+		Iterator iter = eventListeners.getListeners(MoveListener.class);
+		while (iter.hasNext()) {
+			((MoveListener) iter.next()).figureMoved(figure, figure.getBounds());
+		}
+
 	}
 
+	@Override
 	public void mouseReleased(MouseEvent event) {
 		if (location == null)
 			return;
@@ -85,9 +103,7 @@ public class FigureMover implements MouseListener, MouseMotionListener {
 		
 	}
 
-	public void addMoveListener(MoveListener moveListener) {
-		// TODO Auto-generated method stub
-		
+	public void addMoveListener(MoveListener listener) {
+		eventListeners.addListener(MoveListener.class, listener);
 	}
-
 }

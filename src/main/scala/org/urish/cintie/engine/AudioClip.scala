@@ -45,7 +45,7 @@ class AudioClip(val file: File) extends Runnable {
 
   def setVolume(volume: Float) {
     var gainControl = line.getControl(FloatControl.Type.MASTER_GAIN).asInstanceOf[FloatControl];
-    gainControl.setValue(Math.log10(volume).floatValue() * 20);
+    gainControl.setValue(Math.log10(volume + 0.001).floatValue() * 20);
   }
 
   def run() {

@@ -11,32 +11,47 @@ import org.urish.cintie.util.Library
 import org.urish.cintie.util.VstPresetLoader
 
 abstract class Player {
-  var x: Float = 0;
-  var y: Float = 0;
+  protected var _x: Float = 0;
+  protected var _y: Float = 0;
+  def x = _x
+  def y = _y
 
   def start()
   def stop()
+  def moveTo(x: Float, y: Float) = { this._x = x; this._y = y; }
 }
 
 class FourSourcePlayer(soundBank: File) extends Player {
+  private var started = false;
   val clips = List(1, 2, 3, 4).map(i => new AudioClip(new File(soundBank, i + ".wav")))
 
   def start() {
     clips.foreach(clip => if (!clip.playing) { clip.start })
+    started = true
     update
   }
 
-  def stop() = clips.foreach(clip => clip.stop)
+  def stop() {
+    started = false
+    clips.foreach(clip => clip.stop)
+  }
 
   def setGain(i: Int, value: Float) {
     clips(i - 1).setVolume(value)
   }
 
   def update {
-    setGain(1, x * y)
-    setGain(2, x * (1 - y))
-    setGain(3, (1 - x) * y)
-    setGain(4, (1 - x) * (1 - y))
+    if (started) {
+      setGain(1, x * y)
+      setGain(2, x * (1 - y))
+      setGain(3, (1 - x) * y)
+      setGain(4, (1 - x) * (1 - y))
+    }
+  }
+
+  override def moveTo(x: Float, y: Float) {
+    super.moveTo(x, y)
+    update
   }
 }
 
@@ -59,7 +74,10 @@ class VstHarmonicPlayer(vstPath: File) extends Player with Runnable {
   val thread = new Thread(audioThread);
   thread.setDaemon(true)
   thread.start();
-  new Thread(this).start()
+
+  val midiThread = new Thread(this)
+  midiThread.setDaemon(true)
+  midiThread.start()
 
   def run() {
     try {

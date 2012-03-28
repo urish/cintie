@@ -33,11 +33,7 @@ class CintieController {
   @Path("/pawns/{id}")
   def updatePawn(@PathParam("id") id: Int, @FormParam("x") x: Float, @FormParam("y") y: Float) {
     val player = engine.player(id - 1)
-    player.x = x;
-    player.y = y;
-    if (player.isInstanceOf[FourSourcePlayer]) {
-      player.asInstanceOf[FourSourcePlayer].update;
-    }
+    player.moveTo(x, y)
     throw new Exception("Sux")
   }
 }

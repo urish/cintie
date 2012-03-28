@@ -1,5 +1,8 @@
 package org.urish.cintie.ui;
 
-public interface MoveListener {
+import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.geometry.Rectangle;
 
+public interface MoveListener {
+	void figureMoved(IFigure figure, Rectangle bounds);
 }
