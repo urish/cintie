@@ -6,20 +6,23 @@ import java.io.FileOutputStream
 import java.lang.reflect.Field
 import java.io.IOException
 
-object Library {
-  def loadEmbededLibrary(name: String) {
+object LibraryLoader {
+  def loadEmbededLibrary(dllName: String) {
     val tempDir = createTempDirectory();
-    val libStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(name)
-    val tempFile = new File(tempDir, "jvsthost2.dll")
+
+    val libStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(dllName)
+    val tempFile = new File(tempDir, dllName)
     val outputStream = new FileOutputStream(tempFile)
     IOUtils.copy(libStream, outputStream)
     outputStream.close
+    libStream.close
+    tempFile.deleteOnExit()
 
-    System.setProperty("java.library.path", tempDir.getPath());
+    System.setProperty("java.library.path", tempDir.getPath())
+    System.setProperty("jna.library.path", tempDir.getPath())
     val fieldSysPath = classOf[ClassLoader].getDeclaredField("sys_paths");
     fieldSysPath.setAccessible(true);
     fieldSysPath.set(null, null);
-    tempFile.deleteOnExit()
     tempDir.deleteOnExit()
   }
 
