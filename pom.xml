@@ -22,13 +22,13 @@
 		<version.commons.logging>1.1.1</version.commons.logging>
 		<version.scala>2.9.1</version.scala>
 		<version.jersey>1.12</version.jersey>
-		<version.swt>3.6.2</version.swt>
+		<version.swt>3.7.2</version.swt>
 	</properties>
 
 	<repositories>
 		<repository>
-			<id>eclipse-swt-testing</id>
-			<url>http://maven.eclipse.org/nexus/content/repositories/testing/</url>
+			<id>swt-repo</id>
+			<url>https://swt-repo.googlecode.com/svn/repo/</url>
 		</repository>
 	</repositories>
 
@@ -222,8 +222,8 @@
 			<version>${version.swt}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.eclipse.gef</groupId>
-			<artifactId>org.eclipse.gef</artifactId>
+			<groupId>org.eclipse.draw2d</groupId>
+			<artifactId>org.eclipse.draw2d</artifactId>
 			<version>${version.swt}</version>
 		</dependency>
 		
