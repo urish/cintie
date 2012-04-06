@@ -1,18 +1,22 @@
 package org.urish.cintie.engine
-import java.io.File
 
+import java.io.File
 import scala.collection.mutable.ListBuffer
+import org.urish.openal.OpenAL
+import org.urish.cintie.util.LibraryLoader
 
 class CintieEngine {
   val baseDir = new File(System.getProperty("cintie.soundDir"))
   val vstPath = new File("""C:\Program Files (x86)\VstPlugins""")
+  LibraryLoader.loadEmbededLibrary("soft_oal.dll")
+  val openAL = new OpenAL()
   var players: Seq[Player] = loadPlayers()
 
   def loadPlayers(): List[Player] = {
     val result = new ListBuffer[Player]
-    
+
     for (file <- baseDir.listFiles()) {
-    	result += new FourSourcePlayer(file)
+      result += new FourSourcePlayer(file)
     }
 
     try {
@@ -36,6 +40,6 @@ class CintieEngine {
   }
 
   def player(id: Int) = players(id)
-  
+
   def playerCount = players.length
 }
