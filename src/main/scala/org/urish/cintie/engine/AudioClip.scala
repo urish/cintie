@@ -33,7 +33,7 @@ class AudioClip(val openAL: OpenAL, val file: File) {
   val monoPcmData = if (format.getChannels() > 1) toMono(pcmData) else pcmData
   buffer.addBufferData(AL.AL_FORMAT_MONO16, monoPcmData, monoPcmData.length, format.getSampleRate().intValue())
   source.setBuffer(buffer);
-  source.SetLooping(true);
+  source.setLooping(true);
 
   def start() {
     source.play();
