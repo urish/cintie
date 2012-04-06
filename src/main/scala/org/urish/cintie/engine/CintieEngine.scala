@@ -20,7 +20,7 @@ class CintieEngine {
     }
 
     try {
-      result += new VstHarmonicPlayer(new File(vstPath, "nexus.dll"))
+      result += new VstHarmonicPlayer(openAL, new File(vstPath, "nexus.dll"))
     } catch {
       case e => {
         e.printStackTrace()

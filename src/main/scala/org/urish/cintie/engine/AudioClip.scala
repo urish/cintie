@@ -50,7 +50,6 @@ class AudioClip(val openAL: OpenAL, val file: File) {
   }
   
   def position_=(position: Tuple3F): Unit = {
-    System.out.println(position)
     source.setPosition(position)
   }
   

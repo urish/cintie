@@ -60,14 +60,14 @@ class FourSourcePlayer(openAL: OpenAL, soundBank: File) extends Player {
   }
 }
 
-class VstHarmonicPlayer(vstPath: File) extends Player with Runnable {
+class VstHarmonicPlayer(openAL: OpenAL, vstPath: File) extends Player with Runnable {
   var BLOCK_SIZE = 4096
   var SAMPLE_RATE = 44100
 
   LibraryLoader.loadEmbededLibrary("jvsthost2.dll")
   val vst = JVstHost2.newInstance(vstPath, SAMPLE_RATE, BLOCK_SIZE)
   VstPresetLoader.loadVstPreset(vst, new File(vstPath.getParent(), "nexus content/presets/piano/PN Nexus Grandpiano.fxp"))
-  val audioThread = new JVstAudioThread(vst);
+  val audioThread = new VSTClip(vst, openAL.createSource());
   var playing: Boolean = false;
 
   def start() = playing = true
