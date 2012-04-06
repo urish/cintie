@@ -9,6 +9,8 @@ import javax.sound.midi.ShortMessage
 import com.synthbot.audioio.vst.JVstAudioThread
 import org.urish.cintie.util.LibraryLoader
 import org.urish.cintie.util.VstPresetLoader
+import org.urish.openal.OpenAL
+import org.urish.openal.Tuple3F
 
 abstract class Player {
   protected var _x: Float = 0;
@@ -21,9 +23,9 @@ abstract class Player {
   def moveTo(x: Float, y: Float) = { this._x = x; this._y = y; }
 }
 
-class FourSourcePlayer(soundBank: File) extends Player {
+class FourSourcePlayer(openAL: OpenAL, soundBank: File) extends Player {
   private var started = false;
-  val clips = List(1, 2, 3, 4).map(i => new AudioClip(new File(soundBank, i + ".wav")))
+  val clips = List(1, 2, 3, 4).map(i => new AudioClip(openAL, new File(soundBank, i + ".wav")))
 
   def start() {
     clips.foreach(clip => if (!clip.playing) { clip.start })
@@ -37,7 +39,7 @@ class FourSourcePlayer(soundBank: File) extends Player {
   }
 
   def setGain(i: Int, value: Float) {
-    clips(i - 1).setVolume(value)
+    clips(i - 1).volume_=(value)
   }
 
   def update {
@@ -46,6 +48,9 @@ class FourSourcePlayer(soundBank: File) extends Player {
       setGain(2, x * (1 - y))
       setGain(3, (1 - x) * y)
       setGain(4, (1 - x) * (1 - y))
+      val position = new Tuple3F((x - .5f) * 3, 0, (y - .5f) * 3);
+      for (i <- 0 until 4)
+        clips(i).position_=(position)
     }
   }
 

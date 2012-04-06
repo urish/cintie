@@ -16,7 +16,7 @@ class CintieEngine {
     val result = new ListBuffer[Player]
 
     for (file <- baseDir.listFiles()) {
-      result += new FourSourcePlayer(file)
+      result += new FourSourcePlayer(openAL, file)
     }
 
     try {
