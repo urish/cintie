@@ -8,7 +8,6 @@ import org.urish.cintie.util.LibraryLoader
 class CintieEngine {
   val baseDir = new File(System.getProperty("cintie.soundDir"))
   val vstPath = new File("""C:\Program Files (x86)\VstPlugins""")
-  LibraryLoader.loadEmbededLibrary("soft_oal.dll")
   val openAL = new OpenAL()
   var players: Seq[Player] = loadPlayers()
 
