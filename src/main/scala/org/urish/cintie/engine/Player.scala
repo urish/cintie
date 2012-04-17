@@ -66,7 +66,7 @@ class VstHarmonicPlayer(openAL: OpenAL, vstPath: File) extends Player with Runna
 
   LibraryLoader.loadEmbededLibrary("jvsthost2.dll")
   val vst = JVstHost2.newInstance(vstPath, SAMPLE_RATE, BLOCK_SIZE)
-  VstPresetLoader.loadVstPreset(vst, new File(vstPath.getParent(), "nexus content/presets/piano/PN Nexus Grandpiano.fxp"))
+  VstPresetLoader.loadVstPreset(vst, new File(vstPath.getParent(), "nexus content/presets/Single Layer Leads/LD Synced.fxp"))
   val audioThread = new VSTClip(vst, openAL.createSource());
   var playing: Boolean = false;
 
@@ -89,14 +89,14 @@ class VstHarmonicPlayer(openAL: OpenAL, vstPath: File) extends Player with Runna
       while (true) {
         val xy = this.x + this.y
         if (!playing || (xy == prevIndexXY)) {
-          Thread.sleep(100)
+          Thread.sleep(500)
         } else {
           prevIndexXY = xy
           val index = (this.y * 12).intValue()
-          val note = (harmonic(index % 7) + 12 * (index / 7) + 48).asInstanceOf[Int];
+          val note = (harmonic(index % 7) + 12 * (index / 7) + 60).asInstanceOf[Int];
 
           val channel = 0
-          val velocity = (this.x * 127).intValue()
+          val velocity = (this.x * 37).intValue()
           val messageOn = new ShortMessage();
           messageOn.setMessage(ShortMessage.NOTE_ON, channel, note, velocity);
           vst.queueMidiMessage(messageOn);
