@@ -1,15 +1,25 @@
 package org.urish.cintie.engine
 
 import java.io.File
+
 import scala.collection.mutable.ListBuffer
+
 import org.urish.openal.OpenAL
-import org.urish.cintie.util.LibraryLoader
 
 class CintieEngine {
   val baseDir = new File(System.getProperty("cintie.soundDir"))
-  val vstPath = new File("""C:\Program Files (x86)\VstPlugins""")
+  val vstPath = findVstPath()
   val openAL = new OpenAL()
   var players: Seq[Player] = loadPlayers()
+  
+  def findVstPath(): File = {
+    val cand1 = new File("""C:\Program Files (x86)\VstPlugins""")
+    if (cand1.exists()) {
+      return cand1
+    }
+    val cand2 = new File("""C:\Program Files\Cakewalk\VstPlugins""")
+    return cand2
+  }
 
   def loadPlayers(): List[Player] = {
     val result = new ListBuffer[Player]
