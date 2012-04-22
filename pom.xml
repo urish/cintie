@@ -251,13 +251,6 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-io</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>others</groupId>
-			<artifactId>libao-win32</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/lib/libao-1.1.0-win32.jar</systemPath>
-		</dependency>
 
 		<!-- OpenAL -->
 		<dependency>
