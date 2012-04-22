@@ -53,14 +53,21 @@ class FourSourcePlayer(openAL: OpenAL, soundBank: File) extends Player {
     clips(i - 1).volume_=(value)
   }
 
+  def muteClips() {
+    setGain(1, 0.001f)
+    setGain(2, 0.001f)
+    setGain(3, 0.001f)
+    setGain(4, 0.001f)
+    if (backgroundClip != null) {
+      backgroundClip.volume_=(0.001f)
+    }
+  }
+
   def update {
     if (started) {
       if (mute) {
-        setGain(1, 0)
-        setGain(2, 0)
-        setGain(3, 0)
-        setGain(4, 0)
-        return ;
+        muteClips()
+        return
       }
       setGain(1, x * y)
       setGain(2, x * (1 - y))
@@ -70,6 +77,7 @@ class FourSourcePlayer(openAL: OpenAL, soundBank: File) extends Player {
       for (i <- 0 until 4)
         clips(i).position_=(position)
       if (backgroundClip != null) {
+        backgroundClip.volume_=(1)
         backgroundClip.position_=(position);
       }
     }

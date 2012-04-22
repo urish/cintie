@@ -38,6 +38,5 @@ class CintieController {
     if ((on != null) && !(on.equals(""))) {
       player.setMute(!on.equalsIgnoreCase("true"));
     }
-    throw new Exception("Sux")
   }
 }

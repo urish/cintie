@@ -13,6 +13,7 @@ class CintieEngine {
   LibraryLoader.loadEmbededLibrary("soft_oal.dll")
   val openAL = new OpenAL()
   var players: Seq[Player] = loadPlayers()
+  var started = false
 
   def findVstPath(): File = {
     val cand1 = new File("""C:\Program Files (x86)\VstPlugins""")
@@ -43,11 +44,17 @@ class CintieEngine {
   }
 
   def start {
-    players.foreach(p => p.start)
+    if (!started) {
+      players.foreach(p => p.start)
+      started = true
+    }
   }
 
   def stop {
-    players.foreach(p => p.stop)
+    if (started) {
+      players.foreach(p => p.stop)
+      started = false
+    }
   }
 
   def player(id: Int) = players(id)
