@@ -30,6 +30,10 @@
 			<id>swt-repo</id>
 			<url>https://swt-repo.googlecode.com/svn/repo/</url>
 		</repository>
+		<repository>
+			<id>local</id>
+			<url>file://${project.basedir}/repo</url>
+		</repository>
 	</repositories>
 
 	<dependencyManagement>
@@ -124,8 +128,7 @@
 	</dependencyManagement>
 
 	<dependencies>
-		<!-- Import Spring dependencies, these are either from community or versions 
-			certified in WFK2 -->
+		<!-- Import Spring dependencies, these are either from community or versions certified in WFK2 -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-asm</artifactId>
@@ -196,18 +199,14 @@
 
 		<!-- JVstHost -->
 		<dependency>
-			<groupId>others</groupId>
+			<groupId>cintie-internal</groupId>
 			<artifactId>jvsthost</artifactId>
 			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/lib/jvsthost.jar</systemPath>
 		</dependency>
 		<dependency>
-			<groupId>others</groupId>
+			<groupId>cintie-internal</groupId>
 			<artifactId>jvsthost-lib</artifactId>
 			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/lib/jvsthost-lib.jar</systemPath>
 		</dependency>
 
 		<!-- SWT for GUI -->
@@ -226,7 +225,7 @@
 			<artifactId>org.eclipse.draw2d</artifactId>
 			<version>${version.swt}</version>
 		</dependency>
-		
+
 		<!-- JNA -->
 		<dependency>
 			<groupId>net.java.dev.jna</groupId>
@@ -259,7 +258,7 @@
 			<scope>system</scope>
 			<systemPath>${basedir}/lib/libao-1.1.0-win32.jar</systemPath>
 		</dependency>
-		
+
 		<!-- OpenAL -->
 		<dependency>
 			<groupId>org.urish.openal</groupId>
@@ -267,11 +266,9 @@
 			<version>1.0.0</version>
 		</dependency>
 		<dependency>
-			<groupId>others</groupId>
+			<groupId>cintie-internal</groupId>
 			<artifactId>openal-soft-lib</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/lib/openal-soft-1.1.4-win32.jar</systemPath>
+			<version>1.1.4-win32</version>
 		</dependency>
 	</dependencies>
 
