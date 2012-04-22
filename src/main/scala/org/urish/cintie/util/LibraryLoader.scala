@@ -7,9 +7,9 @@ import java.lang.reflect.Field
 import java.io.IOException
 
 object LibraryLoader {
+  val tempDir = createTempDirectory();
+  
   def loadEmbededLibrary(dllName: String) {
-    val tempDir = createTempDirectory();
-
     val libStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(dllName)
     val tempFile = new File(tempDir, dllName)
     val outputStream = new FileOutputStream(tempFile)

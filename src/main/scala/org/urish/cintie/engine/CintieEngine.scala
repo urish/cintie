@@ -4,14 +4,16 @@ import java.io.File
 
 import scala.collection.mutable.ListBuffer
 
+import org.urish.cintie.util.LibraryLoader
 import org.urish.openal.OpenAL
 
 class CintieEngine {
   val baseDir = new File(System.getProperty("cintie.soundDir"))
   val vstPath = findVstPath()
+  LibraryLoader.loadEmbededLibrary("soft_oal.dll")
   val openAL = new OpenAL()
   var players: Seq[Player] = loadPlayers()
-  
+
   def findVstPath(): File = {
     val cand1 = new File("""C:\Program Files (x86)\VstPlugins""")
     if (cand1.exists()) {

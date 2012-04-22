@@ -48,7 +48,7 @@ class NexusVstPlayer(openAL: OpenAL, vstPath: File) extends Player with Runnable
     try {
       while (true) {
         val xy = this.x + this.y
-        if (!playing || (xy == prevIndexXY)) {
+        if (!playing || (xy == prevIndexXY) || mute) {
           Thread.sleep(500)
         } else {
           prevIndexXY = xy

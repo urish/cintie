@@ -15,12 +15,15 @@ import org.urish.openal.Tuple3F
 abstract class Player {
   protected var _x: Float = 0;
   protected var _y: Float = 0;
+  protected var _mute: Boolean = false;
   def x = _x
   def y = _y
+  def mute = _mute
 
   def start()
   def stop()
   def moveTo(x: Float, y: Float) = { this._x = x; this._y = y; }
+  def setMute(mute: Boolean) = { this._mute = mute }
 }
 
 class FourSourcePlayer(openAL: OpenAL, soundBank: File) extends Player {
@@ -52,6 +55,13 @@ class FourSourcePlayer(openAL: OpenAL, soundBank: File) extends Player {
 
   def update {
     if (started) {
+      if (mute) {
+        setGain(1, 0)
+        setGain(2, 0)
+        setGain(3, 0)
+        setGain(4, 0)
+        return ;
+      }
       setGain(1, x * y)
       setGain(2, x * (1 - y))
       setGain(3, (1 - x) * y)
@@ -67,6 +77,11 @@ class FourSourcePlayer(openAL: OpenAL, soundBank: File) extends Player {
 
   override def moveTo(x: Float, y: Float) {
     super.moveTo(x, y)
+    update
+  }
+
+  override def setMute(mute: Boolean) {
+    super.setMute(mute)
     update
   }
 }
