@@ -3,6 +3,8 @@ import javax.sound.sampled.AudioFormat
 import java.io.OutputStream
 import com.synthbot.audioplugin.vst.vst2.JVstHost2
 import org.urish.openal.Source
+import alpatch.SourceOutputStream
+import org.urish.cintie.util.SourceOutputStream
 
 class VSTClip(val vst: JVstHost2, val source: Source) extends Runnable {
 
@@ -16,7 +18,7 @@ class VSTClip(val vst: JVstHost2, val source: Source) extends Runnable {
   val bOutput = new Array[Byte](numAudioOutputs * blockSize * 2);
 
   val audioFormat = new AudioFormat(vst.getSampleRate().intValue, 16, numAudioOutputs, true, false);
-  val outputStream = source.createOutputStream(audioFormat)
+  val outputStream = new SourceOutputStream(CintieEngine.alfactory.al, source, audioFormat)
 
   /**
    * Converts a float audio array [-1,1] to an interleaved array of 16-bit samples
