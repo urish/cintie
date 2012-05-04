@@ -1,13 +1,10 @@
 package org.urish.cintie.engine
 import java.io.File
-
 import org.urish.cintie.util.LibraryLoader
-import org.urish.cintie.util.VstPresetLoader
 import org.urish.openal.OpenAL
-
 import com.synthbot.audioplugin.vst.vst2.JVstHost2
-
 import javax.sound.midi.ShortMessage
+import com.synthbot.audioplugin.vst.vst2.JVstPersistence
 
 object NexusControlMapping {
   val mstFlt = 0
@@ -22,7 +19,8 @@ class NexusVstPlayer(openAL: OpenAL, vstPath: File) extends Player with Runnable
 
   LibraryLoader.loadEmbededLibrary("jvsthost2.dll")
   val vst = JVstHost2.newInstance(vstPath, SAMPLE_RATE, BLOCK_SIZE)
-  VstPresetLoader.loadVstPreset(vst, new File(vstPath.getParent(), "nexus content/presets/Voice/VO Amigavoice Soft.fxp"))
+  JVstPersistence.ignorePluginVersion = true
+  JVstPersistence.loadPreset(vst, new File(vstPath.getParent(), "nexus content/presets/Voice/VO Amigavoice Soft.fxp"))
   vst.turnOn()
   val audioThread = new VSTClip(vst, openAL.createSource());
   var playing: Boolean = false;
