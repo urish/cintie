@@ -1,9 +1,7 @@
 package org.urish.cintie.engine
-import javax.sound.sampled.AudioFormat
-import java.io.OutputStream
-import com.synthbot.audioplugin.vst.vst2.JVstHost2
 import org.urish.openal.Source
-import alpatch.SourceOutputStream
+import com.synthbot.audioplugin.vst.vst2.JVstHost2
+import javax.sound.sampled.AudioFormat
 import org.urish.cintie.util.SourceOutputStream
 
 class VSTClip(val vst: JVstHost2, val source: Source) extends Runnable {
