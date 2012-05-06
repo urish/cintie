@@ -16,8 +16,8 @@ public class VSTPlugin {
 	private final AEffect effect;
 
 	public VSTPlugin(File vstFile) {
-		VSTDynamicLibrary vst = (VSTDynamicLibrary) Native.loadLibrary(vstFile.getAbsolutePath(),
-				VSTDynamicLibrary.class);
+		VSTSharedLibrary vst = (VSTSharedLibrary) Native.loadLibrary(vstFile.getAbsolutePath(),
+				VSTSharedLibrary.class);
 		this.effect = vst.VSTPluginMain(new HostCallback());
 		if (effect == null) {
 			throw new VSTException("VST Plugin Creation Failed, returned null");
