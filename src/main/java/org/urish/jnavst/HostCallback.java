@@ -4,7 +4,7 @@ import com.sun.jna.Callback;
 import com.sun.jna.Pointer;
 
 public class HostCallback implements Callback {
-	private enum OpCodes {
+	private enum Opcodes {
 		audioMasterAutomate,
 		audioMasterVersion,
 		audioMasterCurrentId,
@@ -57,13 +57,13 @@ public class HostCallback implements Callback {
 		audioMasterGetInputSpeakerArrangement;
 	};
 
-	public int Callback(AEffect effect, int opcode, int index, Pointer /* int */value, Pointer /* void */ptr, float opt) {
-		if (opcode >= OpCodes.values().length) {
+	public int Callback(AEffect effect, int opcode, int index, int value, Pointer ptr, float opt) {
+		if (opcode >= Opcodes.values().length) {
 			System.err.println("WARN Called with unsupported VST HOST opcode " + opcode);
 			return 0;
 		}
 
-		switch (OpCodes.values()[opcode]) {
+		switch (Opcodes.values()[opcode]) {
 		case audioMasterAutomate:
 			return OnSetParameterAutomated(effect, index, opt);
 		case audioMasterVersion:
@@ -73,13 +73,14 @@ public class HostCallback implements Callback {
 		case audioMasterIdle:
 			return OnIdle(effect);
 		case audioMasterPinConnected:
-			return (value != null) ? OnInputConnected(effect, index) : OnOutputConnected(effect, index);
+			// return (value != 0) ? OnInputConnected(effect, index) :
+			// OnOutputConnected(effect, index);
 
 			/* VST 2.0 additions... */
 			// case audioMasterWantMidi :
 			// return OnWantEvents(effect, value);
-			// case audioMasterGetTime :
-			// return (long)OnGetTime(effect, value);
+		case audioMasterGetTime:
+			return onGetTime(effect, value);
 			// case audioMasterProcessEvents :
 			// return OnProcessEvents(effect, (VstEvents *)ptr);
 			// case audioMasterSetTime :
@@ -144,9 +145,9 @@ public class HostCallback implements Callback {
 			// case audioMasterGetSpeakerArrangement :
 			// // see above comment
 			// return 0;
-			 case audioMasterGetVendorString :
-			 return OnGetVendorString(ptr);
-			 case audioMasterGetProductString :
+		case audioMasterGetVendorString:
+			return OnGetVendorString(ptr);
+		case audioMasterGetProductString:
 			return OnGetProductString(ptr);
 			// case audioMasterGetVendorVersion :
 			// return OnGetHostVendorVersion();
@@ -188,7 +189,7 @@ public class HostCallback implements Callback {
 		}
 
 		System.err.println("WARN Called with non-implemented VST HOST opcode " + opcode + "( "
-				+ OpCodes.values()[opcode] + " )");
+				+ Opcodes.values()[opcode] + " )");
 		return 0;
 	}
 
@@ -202,28 +203,60 @@ public class HostCallback implements Callback {
 		return VSTConst.VST_TRUE;
 	}
 
-	private int OnOutputConnected(AEffect effect, int index) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	private int OnInputConnected(AEffect effect, int index) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 	private int OnIdle(AEffect effect) {
-		// TODO Auto-generated method stub
+		System.out.println("IDLE");
 		return 0;
 	}
 
 	private int OnGetCurrentUniqueId(AEffect effect) {
-		// TODO Auto-generated method stub
+		System.out.println("OnGetCurrentUniqueId");
 		return 0;
 	}
 
 	private int OnGetVersion(AEffect effect) {
 		return VSTConst.VST_VERSION_2_4;
+	}
+
+	private final VstTimeInfo timeInfo = new VstTimeInfo();
+	private final Pointer timeInfoPointer = timeInfo.getPointer();
+
+	private int onGetTime(AEffect effect, int value) {
+		System.out.println("onGetTime called");
+		timeInfo.samplePos = 0.0;
+		timeInfo.sampleRate = 44100; // TODO
+		timeInfo.flags = 0;
+		if ((value & VSTConst.VST_NanosValid) != 0) {
+			timeInfo.nanoSeconds = 0.0;
+			timeInfo.flags |= VSTConst.VST_NanosValid;
+		}
+		if ((value & VSTConst.VST_PpqPosValid) != 0) {
+			timeInfo.ppqPos = 0.0;
+			timeInfo.flags |= VSTConst.VST_PpqPosValid;
+		}
+		if ((value & VSTConst.VST_TempoValid) != 0) {
+			timeInfo.tempo = 120; // TODO
+			timeInfo.flags |= VSTConst.VST_TempoValid;
+		}
+		if ((value & VSTConst.VST_BarsValid) != 0) {
+			timeInfo.barStartPos = 0.0;
+			timeInfo.flags |= VSTConst.VST_BarsValid;
+		}
+		if ((value & VSTConst.VST_CyclePosValid) != 0) {
+			timeInfo.cycleStartPos = 0.0;
+			timeInfo.cycleEndPos = 0.0;
+			timeInfo.flags |= VSTConst.VST_CyclePosValid;
+		}
+		if ((value & VSTConst.VST_TimeSigValid) != 0) {
+			timeInfo.timeSigNumerator = 4; // TODO
+			timeInfo.timeSigDenominator = 4; // TODO
+			timeInfo.flags |= VSTConst.VST_TimeSigValid;
+		}
+		if ((value & VSTConst.VST_ClockValid) != 0) { // bit 15
+			timeInfo.samplesToNextClock = 0;
+			timeInfo.flags |= VSTConst.VST_ClockValid;
+		}
+		timeInfo.write();
+		return (int) Pointer.nativeValue(timeInfoPointer);
 	}
 
 	private int OnSetParameterAutomated(AEffect effect, int index, float opt) {

@@ -2,22 +2,22 @@ package org.urish.jnavst;
 
 import java.awt.Canvas;
 import java.awt.Component;
+import java.awt.Frame;
+import java.awt.Window;
 import java.io.File;
-
-import javax.swing.JFrame;
 
 import org.urish.jnavst.AEffect.Opcode;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.ptr.PointerByReference;
 
 public class VSTPlugin {
 	private final AEffect effect;
 
 	public VSTPlugin(File vstFile) {
-		VSTSharedLibrary vst = (VSTSharedLibrary) Native.loadLibrary(vstFile.getAbsolutePath(),
-				VSTSharedLibrary.class);
+		VSTSharedLibrary vst = (VSTSharedLibrary) Native.loadLibrary(vstFile.getAbsolutePath(), VSTSharedLibrary.class);
 		this.effect = vst.VSTPluginMain(new HostCallback());
 		if (effect == null) {
 			throw new VSTException("VST Plugin Creation Failed, returned null");
@@ -25,19 +25,44 @@ public class VSTPlugin {
 		if (effect.magic != AEffect.K_EFFECT_MAGIC) {
 			throw new VSTException("VST Plugin Creation Failed, returned invalid magic: " + effect.magic);
 		}
-
 	}
 
 	private boolean b(long value) {
 		return value != VSTConst.VST_FALSE;
 	}
 
+	private int dispatch(Opcode opcode) {
+		return effect.dispatcher.callback(effect, opcode.code, 0, 0, null, 0);
+	}
+
+	private int dispatch(Opcode opcode, Pointer ptr) {
+		return effect.dispatcher.callback(effect, opcode.code, 0, 0, ptr, 0);
+	}
+
+	private int dispatchValue(Opcode opcode, int value) {
+		return effect.dispatcher.callback(effect, opcode.code, 0, value, null, 0);
+	}
+
+	private int dispatchFloat(Opcode opcode, float value) {
+		return effect.dispatcher.callback(effect, opcode.code, 0, 0, null, value);
+	}
+
+	private String stringDispatch(Opcode opcode, int maxLength, int index) {
+		Pointer name = new Memory(maxLength + 1);
+		effect.dispatcher.callback(effect, opcode.code, index, 0, name, 0.f);
+		return name.getString(0);
+	}
+
+	private String stringDispatch(Opcode opcode, int maxLength) {
+		return stringDispatch(opcode, maxLength, 0);
+	}
+
 	private boolean booleanDispatch(Opcode opcode) {
-		return b(effect.dispatcher.callback(effect, opcode.code, 0, 0, null, 0));
+		return b(dispatch(opcode));
 	}
 
 	private boolean booleanDispatch(Opcode opcode, Pointer pointer) {
-		return b(effect.dispatcher.callback(effect, opcode.code, 0, 0, pointer, 0));
+		return b(dispatch(opcode, pointer));
 	}
 
 	public boolean open() {
@@ -46,6 +71,64 @@ public class VSTPlugin {
 
 	public boolean close() {
 		return booleanDispatch(Opcode.effClose);
+	}
+
+	public boolean idle() {
+		return booleanDispatch(Opcode.effIdle);
+	}
+
+	void setProgram(int programIndex) {
+		booleanDispatch(Opcode.effBeginSetProgram);
+		dispatchValue(Opcode.effSetProgram, programIndex);
+		booleanDispatch(Opcode.effEndSetProgram);
+	}
+
+	public int getProgram() {
+		return dispatch(Opcode.effGetProgram);
+	}
+
+	public void setProgramName() {
+		// TODO implement
+	}
+
+	public String getProgramName() {
+		return stringDispatch(Opcode.effGetProgramName, VSTConst.VST_MaxProgNameLen);
+	}
+
+	public String getProgramName(int index) {
+		return stringDispatch(Opcode.effGetProgramName, VSTConst.VST_MaxProgNameLen, index);
+	}
+
+	public String getParamName(int index) {
+		return stringDispatch(Opcode.effGetParamName, VSTConst.VST_MaxParamStrLen, index);
+	}
+
+	public String getParamDisplay(int index) {
+		return stringDispatch(Opcode.effGetParamDisplay, VSTConst.VST_MaxParamStrLen, index);
+	}
+
+	public String getParamLabel(int index) {
+		return stringDispatch(Opcode.effGetParamLabel, VSTConst.VST_MaxParamStrLen, index);
+	}
+
+	public void setSampleRate(float sampleRate) {
+		dispatchFloat(Opcode.effSetSampleRate, sampleRate);
+	}
+
+	public void setBlockSize(int blockSize) {
+		dispatchValue(Opcode.effSetBlockSize, blockSize);
+	}
+
+	public void suspend() {
+		dispatchValue(Opcode.effMainsChanged, VSTConst.VST_FALSE);
+	}
+
+	public void resume() {
+		dispatchValue(Opcode.effMainsChanged, VSTConst.VST_TRUE);
+	}
+
+	public float getVu() {
+		return dispatch(Opcode.effGetVu) / (float) 32767.;
 	}
 
 	public boolean editOpen(Pointer window) {
@@ -57,17 +140,17 @@ public class VSTPlugin {
 	}
 
 	public boolean editOpen(String windowTitle) {
-		ERect rect = getEditRect();
-		JFrame frame = new JFrame("VST Plugin");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		Window frame = new Frame("VST Plugin");
 		frame.setSize(400, 400);
 		frame.setVisible(true);
 		Canvas panel = new Canvas();
 		panel.setSize(400, 400);
 		panel.setVisible(true);
 		frame.add(panel);
+		boolean result = editOpen(frame);
+		ERect rect = getEditRect();
 		System.out.println(rect);
-		return editOpen(panel);
+		return result;
 	}
 
 	public boolean editClose() {
@@ -79,8 +162,10 @@ public class VSTPlugin {
 	}
 
 	public ERect getEditRect() {
-		ERect result = new ERect();
-		if (booleanDispatch(Opcode.effEditGetRect, result.getPointer())) {
+		PointerByReference rectPointer = new PointerByReference();
+		if (booleanDispatch(Opcode.effEditGetRect, rectPointer.getPointer())) {
+			ERect result = new ERect(rectPointer.getValue());
+			result.read();
 			return result;
 		} else {
 			return null;
@@ -94,9 +179,41 @@ public class VSTPlugin {
 	public int getNumOutputs() {
 		return effect.numOutputs;
 	}
-
+	
+	private Pointer createFloatArray2D(float[][] source, int numFrames) {
+		if (source.length == 0) {
+			return null;
+		}
+		
+		int pointerArraySize = source.length * Pointer.SIZE;
+		int floatArraySize = numFrames * 4;
+		Pointer pointerArray = new Memory(pointerArraySize + floatArraySize * source.length);
+		Pointer dataStorage = pointerArray.share(pointerArraySize);
+		for (int i = 0; i < source.length; i++) {
+			pointerArray.setPointer(i * Pointer.SIZE, dataStorage.share(floatArraySize * i, floatArraySize));
+		}
+		return pointerArray;
+	}
+	
 	public void processReplacing(float[][] inputs, float[][] outputs, int numFrames) {
-		effect.processReplacing.callback(effect, inputs, outputs, numFrames);
+		assert(inputs.length == getNumInputs());
+		assert(outputs.length == getNumOutputs());
+		
+		Pointer inputsMemory = createFloatArray2D(inputs, numFrames);
+		Pointer outputsMemory = createFloatArray2D(outputs, numFrames);
+		if (inputsMemory == null) {
+			inputsMemory = outputsMemory;
+		}
+		
+		for (int i = 0; i < inputs.length; i++) {
+			Pointer inputsArray = inputsMemory.getPointer(i * Pointer.SIZE);
+			inputsArray.write(0, inputs[i], 0, numFrames);
+		}
+		effect.processReplacing.callback(effect, inputsMemory, outputsMemory, numFrames);
+		for (int i = 0; i < outputs.length; i++) {
+			Pointer outputArray = outputsMemory.getPointer(i * Pointer.SIZE);
+			outputArray.read(0, outputs[i], 0, numFrames);
+		}
 	}
 
 	/**

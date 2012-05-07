@@ -49,11 +49,11 @@ public class AEffect extends Structure {
 	public byte[] future = new byte[60]; // all zeroes
 
 	public interface DispatcherCallback extends Callback {
-		long callback(AEffect effect, int opCode, int index, int value, Pointer ptr, float opt);
+		int callback(AEffect effect, int opCode, int index, int value, Pointer ptr, float opt);
 	}
 
 	public interface ProcessCallback extends Callback {
-		void callback(AEffect effect, float[][] inputs, float[][] outputs, int sampleFrames);
+		void callback(AEffect effect, Pointer inputs, Pointer outputs, int sampleFrames);
 	}
 	
 	public interface SetParameterCallback extends Callback {
@@ -65,7 +65,7 @@ public class AEffect extends Structure {
 	}
 
 	public interface ProcessReplacingCallback extends Callback {
-		void callback(AEffect effect, float[][] inputs, float[][] outputs, int sampleFrames);
+		void callback(AEffect effect, Pointer inputs, Pointer outputs, int sampleFrames);
 	}
 
 	public enum Opcode {
@@ -78,6 +78,7 @@ public class AEffect extends Structure {
 		effGetParamLabel(6),
 		effGetParamDisplay(7),
 		effGetParamName(8),
+		effGetVu(9),
 		effSetSampleRate(10),
 		effSetBlockSize(11),
 		effMainsChanged(12),
@@ -107,6 +108,7 @@ public class AEffect extends Structure {
 		effVendorSpecific(50),
 		effCanDo(51),
 		effGetTailSize(52),
+		effIdle(53),
 		effGetParameterProperties(56),
 		effGetVstVersion(58),
 		effEditKeyDown(59),

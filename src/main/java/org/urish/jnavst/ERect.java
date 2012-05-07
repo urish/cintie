@@ -1,5 +1,6 @@
 package org.urish.jnavst;
 
+import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 
 public class ERect extends Structure {
@@ -8,11 +9,16 @@ public class ERect extends Structure {
 	public short bottom;
 	public short right;
 
+	public ERect() {
+		super();
+	}
+
+	public ERect(Pointer p) {
+		super(p);
+	}
+
 	@Override
 	public String toString() {
 		return "Rect[" + top + ", " + left + ", " + bottom + ", " + right + "]";
-	}
-
-	public class ByRef extends ERect implements ByReference {
 	}
 }
