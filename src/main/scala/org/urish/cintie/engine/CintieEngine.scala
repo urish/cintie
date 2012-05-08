@@ -33,6 +33,8 @@ class CintieEngine {
             System.err.println("WARN: Could not initialize VST engine; VST pawn will not be available")
           }
         }
+      } else if (new File(file, "12.wav").exists) {
+        result += new ZoneMixPlayer(openAL, file)
       } else {
         result += new FourSourcePlayer(openAL, file)
       }
