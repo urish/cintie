@@ -1,16 +1,20 @@
 package org.urish.cintie.engine
 import java.io.File
-
 import org.urish.openal.OpenAL
 import org.urish.openal.Tuple3F
+import java.util.Properties
+import java.io.FileInputStream
+import java.io.IOException
 
 abstract class Player {
   protected var _x: Float = 0;
   protected var _y: Float = 0;
   protected var _mute: Boolean = false;
+  protected var _gain: Float = 1.0f;
   def x = _x
   def y = _y
   def mute = _mute
+  def gain = _gain
 
   def start()
   def stop()
@@ -23,6 +27,15 @@ class FourSourcePlayer(openAL: OpenAL, soundBank: File) extends Player {
   val clips = List(1, 2, 3, 4).map(i => new AudioClip(openAL, new File(soundBank, i + ".wav")))
   val backgroundClipFile = new File(soundBank, "background.wav")
   val backgroundClip = if (backgroundClipFile.exists()) new AudioClip(openAL, backgroundClipFile) else null;
+  val propertiesFile = new File(soundBank, "player.ini")
+
+  try {
+    val properties = new Properties()
+    properties.load(new FileInputStream(propertiesFile))
+    _gain = properties.getProperty("gain", "1.0").toFloat
+  } catch {
+    case e: IOException => /* pass */
+  }
 
   def start() {
     clips.foreach(clip => if (!clip.playing) { clip.start })
@@ -42,7 +55,7 @@ class FourSourcePlayer(openAL: OpenAL, soundBank: File) extends Player {
   }
 
   def setGain(i: Int, value: Float) {
-    clips(i - 1).volume_=(value)
+    clips(i - 1).volume_=(gain * value)
   }
 
   def muteClips() {
@@ -51,7 +64,7 @@ class FourSourcePlayer(openAL: OpenAL, soundBank: File) extends Player {
     setGain(3, 0.001f)
     setGain(4, 0.001f)
     if (backgroundClip != null) {
-      backgroundClip.volume_=(0.001f)
+      backgroundClip.volume_=(gain * 0.001f)
     }
   }
 

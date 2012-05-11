@@ -1,8 +1,11 @@
 package org.urish.cintie.engine
 
+import java.io.File
+import java.io.FileInputStream
+import java.util.Properties
 import org.urish.openal.OpenAL
 import org.urish.openal.Tuple3F
-import java.io.File
+import java.io.IOException
 
 class ZoneMixPlayer(openAL: OpenAL, soundBank: File) extends Player {
 
@@ -10,6 +13,7 @@ class ZoneMixPlayer(openAL: OpenAL, soundBank: File) extends Player {
   }
 
   private var started = false;
+  val propertiesFile = new File(soundBank, "player.ini")
   val clips = loadClips()
   val backgroundClipFile = new File(soundBank, "background.wav")
   val backgroundClip = if (backgroundClipFile.exists()) new AudioClip(openAL, backgroundClipFile) else null;
@@ -32,6 +36,13 @@ class ZoneMixPlayer(openAL: OpenAL, soundBank: File) extends Player {
   }
 
   def loadClips(): List[AudioClip] = {
+    try {
+      val properties = new Properties()
+      properties.load(new FileInputStream(propertiesFile))
+      _gain = properties.getProperty("gain", "1.0").toFloat
+    } catch {
+      case e: IOException => /* pass */
+    }
     return List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12).map(i => new AudioClip(openAL, new File(soundBank, i + ".wav")))
   }
 
@@ -63,7 +74,7 @@ class ZoneMixPlayer(openAL: OpenAL, soundBank: File) extends Player {
       case 11 => new Point(1, 1)
     }
     val distance = Math.sqrt(square(x - point.x) + square(y - point.y))
-    clip.volume_=(Math.max(1 - distance * 3, 0.001f).asInstanceOf[Float])
+    clip.volume_=(gain * Math.max(1 - distance * 3, 0.001f).asInstanceOf[Float])
   }
 
   def update {
