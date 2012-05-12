@@ -23,6 +23,9 @@ public interface FluidsynthApi extends Library {
 
 	public int fluid_synth_noteoff(Synth synth, int channel, int key);
 
+	public int fluid_synth_write_s16(Synth synth, int length, short[] leftBuf, int leftOffset, int leftIncr,
+		short[] rightBuf, int rightOffset, int rightIncr);
+
 	public void delete_fluid_synth(Synth synth);
 
 	/*-- Audio Drivers --*/
