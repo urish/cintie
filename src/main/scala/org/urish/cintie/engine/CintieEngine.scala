@@ -15,6 +15,7 @@ object CintieEngine {
 class CintieEngine {
   val baseDir = new File(System.getProperty("cintie.soundDir"))
   LibraryLoader.loadEmbededLibrary("soft_oal.dll")
+  LibraryLoader.loadEmbededLibrary("fluidsynth.dll")
   val openAL = new OpenAL(CintieEngine.alfactory, null)
   var players: Seq[Player] = loadPlayers()
   var started = false
@@ -39,6 +40,7 @@ class CintieEngine {
         result += new FourSourcePlayer(openAL, file)
       }
     }
+    result += new SynthPlayer(openAL)
     System.out.println(result)
     return result.toList
   }

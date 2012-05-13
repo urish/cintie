@@ -4,18 +4,16 @@ import com.sun.jna.Library;
 
 public interface FluidsynthApi extends Library {
 	/*-- Settings --*/
-	FluidSettings new_fluid_settings();
+	public FluidSettings new_fluid_settings();
 
-	void delete_fluid_settings(FluidSettings settings);
+	public void delete_fluid_settings(FluidSettings settings);
 
 	/*-- Synth --*/
-	Synth new_fluid_synth(FluidSettings settings);
+	public Synth new_fluid_synth(FluidSettings settings);
 
-	int fluid_synth_sfload(Synth synth, String fileName, boolean updateMidiPresets);
+	public int fluid_synth_sfload(Synth synth, String fileName, boolean updateMidiPresets);
 
 	public int fluid_synth_start(Synth synth);
-
-	public int fluid_sequencer_get_tick(Synth synth);
 
 	public int fluid_synth_program_select(Synth synth, int channel, int soundFont, int bankNum, int presetNum);
 
@@ -23,24 +21,33 @@ public interface FluidsynthApi extends Library {
 
 	public int fluid_synth_noteoff(Synth synth, int channel, int key);
 
-	public int fluid_synth_write_s16(Synth synth, int length, short[] leftBuf, int leftOffset, int leftIncr,
-		short[] rightBuf, int rightOffset, int rightIncr);
+	public int fluid_synth_write_s16(Synth synth, int length, short[] leftBuf, int leftOffset, int leftIncr, short[] rightBuf,
+			int rightOffset, int rightIncr);
+
+	public int fluid_synth_write_s16(Synth synth, int lengthInSamples, byte[] leftBufBytes, int leftOffset, int leftIncr,
+			byte[] rightBufBytes, int rightOffset, int rightIncr);
 
 	public void delete_fluid_synth(Synth synth);
 
 	/*-- Audio Drivers --*/
-	AudioDriver new_fluid_audio_driver(FluidSettings settings, Synth synth);
+	public AudioDriver new_fluid_audio_driver(FluidSettings settings, Synth synth);
 
-	void delete_fluid_audio_driver(AudioDriver driver);
+	public void delete_fluid_audio_driver(AudioDriver driver);
 
 	/*-- Sequencers --*/
-	FluidSequencer new_fluid_sequencer2(int use_system_timer);
+	public FluidSequencer new_fluid_sequencer();
 
-	short fluid_sequencer_register_fluidsynth(FluidSequencer sequencer, Synth synth);
+	public FluidSequencer new_fluid_sequencer2(boolean use_system_timer);
 
-	int fluid_sequencer_send_at(FluidSequencer sequencer, FluidEvent event, int time, int absolute);
+	public short fluid_sequencer_register_fluidsynth(FluidSequencer sequencer, Synth synth);
 
-	void delete_fluid_sequencer(FluidSequencer sequencer);
+	public int fluid_sequencer_get_tick(FluidSequencer sequencer);
+
+	public int fluid_sequencer_send_now(FluidSequencer sequencer, FluidEvent event);
+
+	public int fluid_sequencer_send_at(FluidSequencer sequencer, FluidEvent event, int time, boolean absolute);
+
+	public void delete_fluid_sequencer(FluidSequencer sequencer);
 
 	/*-- Events --*/
 	public FluidEvent new_fluid_event();
