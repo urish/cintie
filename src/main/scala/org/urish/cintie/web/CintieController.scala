@@ -2,7 +2,6 @@ package org.urish.cintie.web
 
 import scala.collection.JavaConversions.seqAsJavaList
 
-import org.springframework.stereotype.Component
 import org.urish.cintie.engine.CintieEngine
 
 import javax.ws.rs.FormParam
@@ -13,7 +12,6 @@ import javax.ws.rs.PathParam
 import javax.ws.rs.Produces
 
 @Path("/")
-@Component
 class CintieController {
   val engine = new CintieEngine();
 

@@ -3,24 +3,13 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 	<display-name>Cintie Web Frontend</display-name>
 
-	<!-- Spring configuration file -->
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>/WEB-INF/spring-jersey-context.xml</param-value>
-	</context-param>
-
-	<!-- Start Spring -->
-	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>
-
 	<!-- REST Services -->
 	<servlet>
 		<servlet-name>Rest_Servlet</servlet-name>
-		<servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
+		<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
 		<init-param>
-			<param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
-			<param-value>true</param-value>
+			<param-name>com.sun.jersey.config.property.packages</param-name>
+			<param-value>org.urish.cintie.web</param-value>
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
