@@ -1,15 +1,15 @@
 package org.urish.cintie.web
 
 import scala.collection.JavaConversions.seqAsJavaList
-
 import org.urish.cintie.engine.CintieEngine
-
 import javax.ws.rs.FormParam
 import javax.ws.rs.GET
 import javax.ws.rs.POST
 import javax.ws.rs.Path
 import javax.ws.rs.PathParam
 import javax.ws.rs.Produces
+import javax.ws.rs.Consumes
+import javax.ws.rs.core.MediaType
 
 object CintieController {
   val engine = new CintieEngine();
@@ -29,7 +29,7 @@ class CintieController {
 
   @GET
   @Path("/pawns")
-  @Produces(Array("application/json"))
+  @Produces(Array(MediaType.APPLICATION_JSON))
   def getPawn() = new PawnList(seqAsJavaList[PawnInfo](engine.players.zipWithIndex.map { case (player, index) => new PawnInfo(index + 1, player.x, player.y) }))
 
   @POST
@@ -40,5 +40,12 @@ class CintieController {
     if ((on != null) && !(on.equals(""))) {
       player.setMute(!on.equalsIgnoreCase("true"));
     }
+  }
+  
+  @POST
+  @Path("/synth")
+  @Consumes(Array(MediaType.APPLICATION_JSON))
+  def updatePreset(synthInfo: SynthInfo) {
+    engine.synthPlayer.preset = synthInfo.preset
   }
 }

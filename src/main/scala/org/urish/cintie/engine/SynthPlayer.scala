@@ -14,6 +14,7 @@ class SynthPlayer(val openAL: OpenAL) extends Player {
   var synthThread: SynthThread = null;
   var harmonic = Array[Int](0, 2, 3, 5, 7, 10)
   var basePitch = 69
+  private var _preset = 1
 
   val source = openAL.createSource()
   var nextBuffer = 0
@@ -30,6 +31,12 @@ class SynthPlayer(val openAL: OpenAL) extends Player {
       synthThread.stop();
       synthThread = null;
     }
+  }
+  
+  def preset = _preset
+  def preset_=(preset: Int) {
+    fluidsynth.fluid_synth_program_select(synth, 0, soundFontId, 0, preset);
+    _preset = preset
   }
 
   def square(x: Float): Float = { x * x }
