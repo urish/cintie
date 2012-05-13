@@ -11,10 +11,14 @@ import javax.ws.rs.Path
 import javax.ws.rs.PathParam
 import javax.ws.rs.Produces
 
+object CintieController {
+  val engine = new CintieEngine();
+}
+
 @Path("/")
 class CintieController {
-  val engine = new CintieEngine();
-
+  val engine = CintieController.engine
+  
   @GET
   @Path("/start")
   def start() = engine.start
