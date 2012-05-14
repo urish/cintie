@@ -36,8 +36,10 @@
 					setPreset((getPreset()+1) % 128);					
 				});
 				$(".octave-button").click(function(ev) {
-					alert(this.title);
 					postJson("/app/synth", {"octave": parseInt(this.title)});
+				});
+				$(".volume-button").click(function(ev) {
+					postJson("/app/synth", {"volume": parseInt(this.title)});
 				});
 			});
 		</script>
@@ -59,6 +61,13 @@
 			<button class="octave-button" title="1">Med1</button>
 			<button class="octave-button" title="2">Med2</button>
 			<button class="octave-button" title="3">High</button>			
+
+			<h2>Volume</h2>
+			<button class="volume-button" title="40">1</button>
+			<button class="volume-button" title="60">2</button>
+			<button class="volume-button" title="80">3</button>
+			<button class="volume-button" title="100">4</button>			
+			<button class="volume-button" title="127">5</button>			
 		</div>
 	</body>
 </html>

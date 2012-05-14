@@ -52,5 +52,8 @@ class CintieController {
     if (synthInfo.octave >= 0) {
       engine.synthPlayer.octave = synthInfo.octave
     }
+    if (synthInfo.volume >= 0) {
+      engine.synthPlayer.volume = synthInfo.volume.shortValue()
+    }
   }
 }
