@@ -55,6 +55,13 @@ class FourSourcePlayer(openAL: OpenAL, soundBank: File) extends Player {
   }
 
   def setGain(i: Int, value: Float) {
+    if (value <= 0) {
+      setGain(i, 0.0001f)
+      return
+    } else if (value > 1) {
+      setGain(i, 1)
+      return
+    }
     clips(i - 1).volume_=(gain * value)
   }
 
