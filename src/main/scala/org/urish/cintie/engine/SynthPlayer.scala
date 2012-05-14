@@ -9,12 +9,14 @@ class SynthPlayer(val openAL: OpenAL) extends Player {
   val settings = fluidsynth.new_fluid_settings();
   val synth = fluidsynth.new_fluid_synth(settings);
   val soundFontId = fluidsynth.fluid_synth_sfload(synth, "media/FluidR3 GM.sf2", false);
-  fluidsynth.fluid_synth_program_select(synth, 0, soundFontId, 0, 1);
+  fluidsynth.fluid_synth_program_select(synth, 0, soundFontId, 0, 46);
+  fluidsynth.fluid_synth_set_reverb(synth, 0.75, 0.18, 0.76, 1)
+  fluidsynth.fluid_synth_cc(synth, 0, 0x5B, 127)
 
   var synthThread: SynthThread = null;
-  var harmonic = Array[Int](0, 2, 3, 5, 7, 10)
-  var basePitch = 69
-  private var _preset = 1
+  var harmonic = Array[Int](-3, -1, 0, 2, 4, 7, 9)
+  var basePitch = 72
+  private var _preset = 8
 
   val source = openAL.createSource()
   var nextBuffer = 0

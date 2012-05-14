@@ -21,11 +21,15 @@ public interface FluidsynthApi extends Library {
 
 	public int fluid_synth_noteoff(Synth synth, int channel, int key);
 
+	public void fluid_synth_cc(Synth synth, int channel, int control, int value);
+
 	public int fluid_synth_write_s16(Synth synth, int length, short[] leftBuf, int leftOffset, int leftIncr, short[] rightBuf,
 			int rightOffset, int rightIncr);
 
 	public int fluid_synth_write_s16(Synth synth, int lengthInSamples, byte[] leftBufBytes, int leftOffset, int leftIncr,
 			byte[] rightBufBytes, int rightOffset, int rightIncr);
+
+	public void fluid_synth_set_reverb(Synth synth, double roomSize, double damping, double width, double level);
 
 	public void delete_fluid_synth(Synth synth);
 
