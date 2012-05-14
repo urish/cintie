@@ -19,6 +19,9 @@
 					$("#input-preset")[0].value = value;
 					postJson("/app/synth", {"preset": parseInt(value)});
 				}
+				function setReverb(value) {
+					postJson("/app/synth", {"reverb": parseInt(value)});
+				}
 				function getPreset() {
 					return parseInt($("#input-preset")[0].value);					
 				}
@@ -31,6 +34,10 @@
 				});
 				$("#preset-plus").click(function(ev) {
 					setPreset((getPreset()+1) % 128);					
+				});
+				$(".octave-button").click(function(ev) {
+					alert(this.title);
+					postJson("/app/synth", {"octave": parseInt(this.title)});
 				});
 			});
 		</script>
@@ -47,9 +54,11 @@
 			<input id="input-preset" type="number" value="1" min="1" max="127" />
 			<button id="preset-plus">+</button>
 			
-			<h2>Reverb</h2>
-			Not yet ;)
-			
+			<h2>Octave</h2>
+			<button class="octave-button" title="0">Low</button>
+			<button class="octave-button" title="1">Med1</button>
+			<button class="octave-button" title="2">Med2</button>
+			<button class="octave-button" title="3">High</button>			
 		</div>
 	</body>
 </html>

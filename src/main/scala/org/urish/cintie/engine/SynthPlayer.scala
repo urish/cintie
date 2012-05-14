@@ -15,8 +15,10 @@ class SynthPlayer(val openAL: OpenAL) extends Player {
 
   var synthThread: SynthThread = null;
   var harmonic = Array[Int](-3, -1, 0, 2, 4, 7, 9)
-  var basePitch = 72
+  var basePitch = 36
+
   private var _preset = 8
+  var octave = 3
 
   val source = openAL.createSource()
   var nextBuffer = 0
@@ -61,8 +63,8 @@ class SynthPlayer(val openAL: OpenAL) extends Player {
     val xf = x * 8
     val yf = y * 8
     val note = (xf + yf).intValue()
-    val octave = (note / harmonic.length) % 2
-    synthThread.sendNote(0, (basePitch + octave * 12 + harmonic(note % harmonic.length)).shortValue(), 127, 220)
+    val finalOctave = octave + (note / harmonic.length) % 2
+    synthThread.sendNote(0, (basePitch + finalOctave * 12 + harmonic(note % harmonic.length)).shortValue(), 127, 220)
   }
 
   override def setMute(mute: Boolean) {

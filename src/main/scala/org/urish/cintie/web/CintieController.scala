@@ -18,7 +18,7 @@ object CintieController {
 @Path("/")
 class CintieController {
   val engine = CintieController.engine
-  
+
   @GET
   @Path("/start")
   def start() = engine.start
@@ -41,11 +41,16 @@ class CintieController {
       player.setMute(!on.equalsIgnoreCase("true"));
     }
   }
-  
+
   @POST
   @Path("/synth")
   @Consumes(Array(MediaType.APPLICATION_JSON))
   def updatePreset(synthInfo: SynthInfo) {
-    engine.synthPlayer.preset = synthInfo.preset
+    if (synthInfo.preset >= 0) {
+      engine.synthPlayer.preset = synthInfo.preset
+    }
+    if (synthInfo.octave >= 0) {
+      engine.synthPlayer.octave = synthInfo.octave
+    }
   }
 }
