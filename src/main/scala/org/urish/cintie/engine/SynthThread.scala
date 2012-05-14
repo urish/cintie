@@ -10,7 +10,7 @@ import org.urish.openal.SourceState
 import javax.sound.sampled.AudioFormat
 
 class SynthThread(val openAL: OpenAL, val source: Source, val fluidsynth: FluidsynthApi, val synth: Synth) extends Runnable {
-  val SAMPLES_PER_BUFFER = 1024
+  val SAMPLES_PER_BUFFER = 2048
   val audioFormat = new AudioFormat(44100, 16, 1, true, false);
   var terminating = false
 

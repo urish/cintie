@@ -1,8 +1,8 @@
 package org.urish.cintie.engine
 import org.urish.jfluid.FluidsynthApi
 import org.urish.openal.OpenAL
-
 import com.sun.jna.Native
+import org.urish.openal.Tuple3F
 
 class SynthPlayer(val openAL: OpenAL) extends Player {
   val fluidsynth = Native.loadLibrary("fluidsynth", classOf[FluidsynthApi]).asInstanceOf[FluidsynthApi]
@@ -66,6 +66,8 @@ class SynthPlayer(val openAL: OpenAL) extends Player {
     val note = (xf + yf).intValue()
     val finalOctave = octave + (note / harmonic.length) % 2
     synthThread.sendNote(0, (basePitch + finalOctave * 12 + harmonic(note % harmonic.length)).shortValue(), volume, 220)
+    val position = new Tuple3F((x - .5f) * 3, 0, (y - .5f) * 3)
+    source.setPosition(position)
   }
 
   override def setMute(mute: Boolean) {
