@@ -40,7 +40,19 @@ class SynthThread(val openAL: OpenAL, val source: Source, val fluidsynth: Fluids
     fluidsynth.fluid_event_note(event, channel, key, velocity, duration)
     fluidsynth.fluid_sequencer_send_now(sequencer, event)
   }
-  
+
+  def sendNoteOn(channel: Int, key: Short, velocity: Short) {
+    val event = createEvent()
+    fluidsynth.fluid_event_noteon(event, channel, key, velocity)
+    fluidsynth.fluid_sequencer_send_now(sequencer, event)
+  }
+
+    def sendNoteOff(channel: Int, key: Short) {
+    val event = createEvent()
+    fluidsynth.fluid_event_noteoff(event, channel, key)
+    fluidsynth.fluid_sequencer_send_now(sequencer, event)
+  }
+
   def currentTick(): Int = {
     fluidsynth.fluid_sequencer_get_tick(sequencer)
   }
@@ -49,7 +61,7 @@ class SynthThread(val openAL: OpenAL, val source: Source, val fluidsynth: Fluids
     val buffers = Array[Buffer](openAL.createBuffer(), openAL.createBuffer(), openAL.createBuffer())
     var nextBuffer = 0
     val buffer = new Array[Byte](SAMPLES_PER_BUFFER * 2)
-    
+
     try {
       fluidsynth.fluid_synth_start(synth);
       while (!terminating) {
