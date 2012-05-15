@@ -45,12 +45,19 @@ class AudioClip(val openAL: OpenAL, val file: File) {
   
   def playing() = source.getSourceState() == SourceState.PLAYING;
 
+  def volume=source.getGain()
   def volume_=(volume: Float) {
     source.setGain(volume);
   }
   
-  def position_=(position: Tuple3F): Unit = {
+  def position=source.getPosition()
+  def position_=(position: Tuple3F) {
     source.setPosition(position)
+  }
+  
+  def pitch=source.getPitch()
+  def pitch_=(pitch: Float) {
+    source.setPitch(pitch)
   }
   
   private def toMono(pcmData: Array[Byte]): Array[Byte] = {

@@ -20,6 +20,7 @@ class CintieEngine {
   val synthPlayer = new SynthPlayer(openAL);
   var players: Seq[Player] = loadPlayers()
   var started = false
+  var _pitch: Float = 1
 
   def loadPlayers(): List[Player] = {
     val result = new ListBuffer[Player]
@@ -63,4 +64,12 @@ class CintieEngine {
   def player(id: Int) = players(id)
 
   def playerCount = players.length
+  
+  def pitch = _pitch
+  def pitch_=(pitch: Float) {
+    _pitch = pitch
+    for (player <- players) {
+      player.changePitch(pitch)
+    }
+  }
 }

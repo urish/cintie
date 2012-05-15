@@ -20,6 +20,7 @@ abstract class Player {
   def stop()
   def moveTo(x: Float, y: Float) = { this._x = x; this._y = y; }
   def setMute(mute: Boolean) = { this._mute = mute }
+  def changePitch(value: Float) {}
 }
 
 class FourSourcePlayer(openAL: OpenAL, soundBank: File) extends Player {
@@ -103,5 +104,14 @@ class FourSourcePlayer(openAL: OpenAL, soundBank: File) extends Player {
   override def setMute(mute: Boolean) {
     super.setMute(mute)
     update
+  }
+
+  override def changePitch(value: Float) {
+    for (clip <- clips) {
+      clip.pitch = value
+    }
+    if (backgroundClip != null) {
+      backgroundClip.pitch = value
+    }
   }
 }

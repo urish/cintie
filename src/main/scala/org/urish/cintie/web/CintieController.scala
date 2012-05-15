@@ -55,5 +55,8 @@ class CintieController {
     if (synthInfo.volume >= 0) {
       engine.synthPlayer.volume = synthInfo.volume.shortValue()
     }
+    if (synthInfo.pitch > 0.001f) {
+      engine.pitch = synthInfo.pitch
+    }
   }
 }

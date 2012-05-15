@@ -105,4 +105,13 @@ class ZoneMixPlayer(openAL: OpenAL, soundBank: File) extends Player {
     super.setMute(mute)
     update
   }
+
+  override def changePitch(value: Float) {
+    for (clip <- clips) {
+      clip.pitch = value
+    }
+    if (backgroundClip != null) {
+      backgroundClip.pitch = value
+    }
+  }
 }

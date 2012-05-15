@@ -37,7 +37,7 @@ class SynthPlayer(val openAL: OpenAL) extends Player {
       synthThread = null;
     }
   }
-  
+
   def preset = _preset
   def preset_=(preset: Int) {
     fluidsynth.fluid_synth_program_select(synth, 0, soundFontId, 0, preset);
@@ -72,5 +72,9 @@ class SynthPlayer(val openAL: OpenAL) extends Player {
 
   override def setMute(mute: Boolean) {
     source.setGain(if (mute) 0.001f else 1)
+  }
+
+  override def changePitch(value: Float) {
+    source.setPitch(value)
   }
 }

@@ -19,11 +19,15 @@
 					$("#input-preset")[0].value = value;
 					postJson("/app/synth", {"preset": parseInt(value)});
 				}
-				function setReverb(value) {
-					postJson("/app/synth", {"reverb": parseInt(value)});
+				function setSpeed(value) {
+					$("#input-speed")[0].value = value;
+					postJson("/app/synth", {"pitch": (1 + (parseInt(value) - 1) / 19.0 * 0.4)});
 				}
 				function getPreset() {
 					return parseInt($("#input-preset")[0].value);					
+				}
+				function getSpeed() {
+					return parseInt($("#input-speed")[0].value);					
 				}
 
 				$("#input-preset").change(function(ev) {
@@ -40,6 +44,15 @@
 				});
 				$(".volume-button").click(function(ev) {
 					postJson("/app/synth", {"volume": parseInt(this.title)});
+				});
+				$("#input-speed").change(function(ev) {
+					setSpeed(this.value);
+				});
+				$("#speed-minus").click(function(ev) {
+					setSpeed(Math.max(1, getSpeed()-1));			
+				});
+				$("#speed-plus").click(function(ev) {
+					setSpeed(Math.min(20, getSpeed()+1));			
 				});
 			});
 		</script>
@@ -66,8 +79,13 @@
 			<button class="volume-button" title="40">1</button>
 			<button class="volume-button" title="60">2</button>
 			<button class="volume-button" title="80">3</button>
-			<button class="volume-button" title="100">4</button>			
-			<button class="volume-button" title="127">5</button>			
+			<button class="volume-button" title="100">4</button>
+			<button class="volume-button" title="127">5</button>
+
+			<h2>Speed</h2>
+			<button id="speed-minus">-</button>
+			<input id="input-speed" type="number" value="1" min="1" max="20" />
+			<button id="speed-plus">+</button>
 		</div>
 	</body>
 </html>
