@@ -35,10 +35,14 @@ class SynthThread(val openAL: OpenAL, val source: Source, val fluidsynth: Fluids
     return event
   }
 
-  def sendNote(channel: Int, key: Short, velocity: Short, duration: Int) {
+  def sendNote(channel: Int, key: Short, velocity: Short, duration: Int, delay: Int = 0) {
     val event = createEvent()
     fluidsynth.fluid_event_note(event, channel, key, velocity, duration)
-    fluidsynth.fluid_sequencer_send_now(sequencer, event)
+    if (delay > 0) {
+      fluidsynth.fluid_sequencer_send_at(sequencer, event, delay, false)
+    } else {
+      fluidsynth.fluid_sequencer_send_now(sequencer, event)
+    }
   }
 
   def sendNoteOn(channel: Int, key: Short, velocity: Short) {
@@ -47,7 +51,7 @@ class SynthThread(val openAL: OpenAL, val source: Source, val fluidsynth: Fluids
     fluidsynth.fluid_sequencer_send_now(sequencer, event)
   }
 
-    def sendNoteOff(channel: Int, key: Short) {
+  def sendNoteOff(channel: Int, key: Short) {
     val event = createEvent()
     fluidsynth.fluid_event_noteoff(event, channel, key)
     fluidsynth.fluid_sequencer_send_now(sequencer, event)
@@ -76,7 +80,7 @@ class SynthThread(val openAL: OpenAL, val source: Source, val fluidsynth: Fluids
           source.unqueueBuffer(buffers(nextBuffer))
         }
         buffers(nextBuffer).addBufferData(audioFormat, buffer)
-        source.queueBuffer(buffers(nextBuffer))
+        source.queueBuffer(buffers(nextBuffer)) 
         if (source.getSourceState() == SourceState.INITIAL) {
           source.play();
         }
